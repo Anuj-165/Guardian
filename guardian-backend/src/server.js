@@ -16,7 +16,7 @@ import weatherRoutes from "./Routes/weatherRoutes.js";
 const app = express();
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://localhost:3000"],
+  origin: ["https://guardian-mub9.onrender.com", "http://localhost:3000"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
