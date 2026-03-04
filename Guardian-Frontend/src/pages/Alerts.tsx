@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { AlertTriangle, AlertCircle, Info, Plus, X, CloudSun } from 'lucide-react';
+import { AlertTriangle, AlertCircle, Info, Plus, X } from 'lucide-react';
 import API from '../api/axios';
 import toast from 'react-hot-toast';
 
@@ -42,7 +42,6 @@ const Alerts = () => {
       navigate('/login');
       return;
     }
-    
     Promise.all([fetchAlerts(), fetchWeather()]).finally(() => setLoading(false));
   }, [user, navigate]);
 
@@ -82,9 +81,9 @@ const Alerts = () => {
 
   const getSeverityIcon = (severity: string) => {
     switch (severity.toLowerCase()) {
-      case 'high': return <AlertTriangle className="w-6 h-6 text-red-500" />;
-      case 'medium': return <AlertCircle className="w-6 h-6 text-yellow-500" />;
-      default: return <Info className="w-6 h-6 text-blue-500" />;
+      case 'high': return <AlertTriangle className="w-6 h-6 text-red-500 shrink-0" />;
+      case 'medium': return <AlertCircle className="w-6 h-6 text-yellow-500 shrink-0" />;
+      default: return <Info className="w-6 h-6 text-blue-500 shrink-0" />;
     }
   };
 
@@ -99,48 +98,52 @@ const Alerts = () => {
   if (loading) return <div className="text-center mt-8 text-white">Loading data...</div>;
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+      
       
       {weather && (
-        <div className="mb-8 bg-gray-800/50 border border-blue-500/30 rounded-xl p-4 flex items-center justify-between shadow-lg backdrop-blur-sm">
-          <div className="flex items-center gap-4">
-            <img src={weather.icon} alt="Weather icon" className="w-16 h-16" />
+        <div className="mb-6 sm:mb-8 bg-gray-800/50 border border-blue-500/30 rounded-xl p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between shadow-lg backdrop-blur-sm gap-4">
+          <div className="flex items-center gap-4 text-center sm:text-left">
+            <img src={weather.icon} alt="Weather icon" className="w-12 h-12 sm:w-16 sm:h-16" />
             <div>
-              <h3 className="text-3xl font-bold text-white">{weather.temp}°C</h3>
-              <p className="text-blue-400 font-medium">{weather.city} — {weather.condition}</p>
+              <h3 className="text-2xl sm:text-3xl font-bold text-white">{weather.temp}°C</h3>
+              <p className="text-blue-400 font-medium text-sm sm:text-base">{weather.city} — {weather.condition}</p>
             </div>
           </div>
-          <div className="hidden md:block text-right">
-            <p className="text-gray-400 text-sm">Live Monitoring Active</p>
-            <p className="text-green-400 text-xs font-mono animate-pulse">● System Online</p>
+          <div className="text-center sm:text-right">
+            <p className="text-gray-400 text-xs sm:text-sm">Live Monitoring Active</p>
+            <p className="text-green-400 text-[10px] sm:text-xs font-mono animate-pulse">● System Online</p>
           </div>
         </div>
       )}
 
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-white">Crisis Alerts</h1>
+      
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white">Crisis Alerts</h1>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors font-semibold"
+          className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg flex items-center justify-center transition-colors font-semibold"
         >
           <Plus size={20} className="mr-2" /> Create Alert
         </button>
       </div>
 
+      
       <div className="space-y-4">
         {alerts.map((alert) => (
-          <div key={alert.id} className={`border rounded-lg p-6 transition-all hover:scale-[1.01] ${getSeverityColor(alert.severity)}`}>
-            <div className="flex items-start space-x-4">
+          <div key={alert.id} className={`border rounded-lg p-4 sm:p-6 transition-all hover:scale-[1.01] ${getSeverityColor(alert.severity)}`}>
+            {/* Mobile: Icon on top or Side-by-side depending on screen */}
+            <div className="flex flex-col sm:flex-row items-start gap-4">
               {getSeverityIcon(alert.severity)}
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <h2 className="text-xl font-semibold mb-2 text-white">{alert.title}</h2>
-                  <span className={`text-xs uppercase font-bold px-2 py-1 rounded ${alert.active ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}`}>
+              <div className="flex-1 w-full">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-2">
+                  <h2 className="text-lg sm:text-xl font-semibold text-white leading-tight">{alert.title}</h2>
+                  <span className={`text-[10px] uppercase font-bold px-2 py-1 rounded self-start ${alert.active ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}`}>
                     {alert.active ? 'Active' : 'Archived'}
                   </span>
                 </div>
-                <p className="text-gray-300 mb-4">{alert.description}</p>
-                <div className="flex justify-between text-sm text-gray-400">
+                <p className="text-gray-300 text-sm sm:text-base mb-4 break-words">{alert.description}</p>
+                <div className="flex flex-col sm:flex-row justify-between text-xs sm:text-sm text-gray-400 gap-2">
                   <span className="flex items-center">📍 {alert.location}</span>
                   <span>
                     {new Date(alert.created_at).toLocaleDateString('en-US', {
@@ -154,30 +157,30 @@ const Alerts = () => {
         ))}
       </div>
 
-      {/* Manual Alert Modal (Keeping your existing logic) */}
+      
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-800 rounded-xl p-8 max-w-md w-full border border-gray-700 shadow-2xl">
+          <div className="bg-gray-800 rounded-xl p-6 sm:p-8 max-w-md w-full border border-gray-700 shadow-2xl overflow-y-auto max-h-[90vh]">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white">Issue Emergency Alert</h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-white">
+              <h2 className="text-xl sm:text-2xl font-bold text-white">Issue Emergency Alert</h2>
+              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-white p-1">
                 <X size={24} />
               </button>
             </div>
             <form onSubmit={handleCreateAlert} className="space-y-4">
               <input 
                 type="text" placeholder="Alert Title" 
-                className="w-full p-3 rounded bg-gray-900 border border-gray-700 text-white outline-none focus:border-red-500"
+                className="w-full p-3 rounded bg-gray-900 border border-gray-700 text-white outline-none focus:border-red-500 text-sm sm:text-base"
                 value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} required 
               />
               <textarea 
                 placeholder="Detailed Description" rows={3}
-                className="w-full p-3 rounded bg-gray-900 border border-gray-700 text-white outline-none focus:border-red-500"
+                className="w-full p-3 rounded bg-gray-900 border border-gray-700 text-white outline-none focus:border-red-500 text-sm sm:text-base"
                 value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} required 
               />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <select 
-                  className="p-3 rounded bg-gray-900 border border-gray-700 text-white outline-none focus:border-red-500"
+                  className="p-3 rounded bg-gray-900 border border-gray-700 text-white outline-none focus:border-red-500 text-sm"
                   value={formData.severity} onChange={(e) => setFormData({...formData, severity: e.target.value})}
                 >
                   <option value="low">Low Severity</option>
@@ -186,11 +189,11 @@ const Alerts = () => {
                 </select>
                 <input 
                   type="text" placeholder="Location" 
-                  className="p-3 rounded bg-gray-900 border border-gray-700 text-white outline-none focus:border-red-500"
+                  className="p-3 rounded bg-gray-900 border border-gray-700 text-white outline-none focus:border-red-500 text-sm"
                   value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})} required 
                 />
               </div>
-              <button type="submit" className="w-full bg-red-600 py-3 rounded-lg font-bold text-white hover:bg-red-700 transition-all shadow-lg shadow-red-900/20">
+              <button type="submit" className="w-full bg-red-600 py-3 rounded-lg font-bold text-white hover:bg-red-700 transition-all shadow-lg shadow-red-900/20 mt-2">
                 Broadcast Emergency Alert
               </button>
             </form>
